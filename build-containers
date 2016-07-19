@@ -2,3 +2,5 @@
 set -e
 docker build -t kcarnold/clubdl-base -f Dockerfile.base .
 docker build -t kcarnold/clubdl -f Dockerfile .
+docker push kcarnold/clubdl-base
+docker push kcarnold/clubdl
