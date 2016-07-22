@@ -31,6 +31,9 @@ RUN pip install theano && \
 # Somehow pytables depends on something that conflicts with libgdal=2
 RUN conda remove -y pytables && conda install -y gdal libgdal=2
 
+# Get some data.
+RUN python -c 'import nltk; nltk.download("punkt"); nltk.download("wordnet")'
+
 EXPOSE 8888
 VOLUME /workspace
 WORKDIR /workspace
