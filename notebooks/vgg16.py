@@ -1,6 +1,7 @@
 import os
 BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 weights_path = BASE_PATH + '/../vgg16_weights.h5'
+synsets = [line.strip().split(' ', 1) for line in open(BASE_PATH + '/../synset_words.txt')]
 
 from keras.models import Sequential
 from keras.layers import Convolution2D, ZeroPadding2D, MaxPooling2D, Flatten, Dense, Dropout
@@ -67,3 +68,12 @@ for k in range(f.attrs['nb_layers']):
     model.layers[k].set_weights(weights)
 f.close()
 print('Model loaded.')
+
+
+from nltk.corpus import wordnet
+def get_synset(imagenet_synset_id):
+    return wordnet.of2ss(imagenet_synset_id[1:] + 'n')
+def is_a(leaf, root):
+    return any(root in path for path in leaf.hypernym_paths())
+def get_all_leaf_indices(root):
+    return [i for i, (ssid, words) in enumerate(synsets) if is_a(get_synset(ssid), root)]
