@@ -3,6 +3,7 @@ BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 weights_path = BASE_PATH + '/../vgg16_weights.h5'
 synsets = [line.strip().split(' ', 1) for line in open(BASE_PATH + '/../synset_words.txt')]
 
+import numpy as np
 from keras.models import Sequential
 from keras.layers import Convolution2D, ZeroPadding2D, MaxPooling2D, Flatten, Dense, Dropout
 
@@ -70,6 +71,17 @@ f.close()
 print('Model loaded.')
 
 
+VGG_MEAN_PIXEL = np.array([103.939, 116.779, 123.68])
+def img_to_vgg_input(img):
+    return imgs_to_vgg_input(np.expand_dims(img, axis=0))
+
+def imgs_to_vgg_input(imgs):
+    assert imgs.shape[-1] == 3
+    imgs = imgs[..., [2,1,0]]
+    imgs = imgs - VGG_MEAN_PIXEL
+    return imgs.transpose((0, 3, 1, 2))
+
+
 from nltk.corpus import wordnet
 def get_synset(imagenet_synset_id):
     return wordnet.of2ss(imagenet_synset_id[1:] + 'n')
@@ -77,3 +89,7 @@ def is_a(leaf, root):
     return any(root in path for path in leaf.hypernym_paths())
 def get_all_leaf_indices(root):
     return [i for i, (ssid, words) in enumerate(synsets) if is_a(get_synset(ssid), root)]
+
+
+all_dogs = get_all_leaf_indices(wordnet.synset('dog.n.01'))
+all_cats = get_all_leaf_indices(wordnet.synset('cat.n.01'))
