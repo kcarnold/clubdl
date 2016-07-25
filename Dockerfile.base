@@ -38,4 +38,8 @@ EXPOSE 8888
 VOLUME /workspace
 WORKDIR /workspace
 COPY ./data /data
+
+# Build the data files
+# RUN pip install tqdm && cd notebooks && python make_gatoperro.py
+
 CMD [ "/bin/bash" ]
