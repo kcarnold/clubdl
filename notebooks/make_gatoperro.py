@@ -2,13 +2,14 @@
 import numpy as np
 from scipy.misc import imsave, fromimage
 from PIL import Image, ImageOps
+from tqdm import tqdm, trange
 
 BASE = '/data/gatos'
 WIDTH = HEIGHT = 224
 def load_and_crop_image(filename, target_size):
     return ImageOps.fit(Image.open(filename), target_size)
-gatos = np.array([fromimage(load_and_crop_image(BASE+'/cat.{:04}.jpg'.format(i), (WIDTH, HEIGHT))) for i in range(100)])
-perros = np.array([fromimage(load_and_crop_image(BASE+'/dog.{:04}.jpg'.format(i), (WIDTH, HEIGHT))) for i in range(100)])
+gatos = np.array([fromimage(load_and_crop_image(BASE+'/cat.{:04}.jpg'.format(i), (WIDTH, HEIGHT))) for i in trange(100, desc='cargar gatos')])
+perros = np.array([fromimage(load_and_crop_image(BASE+'/dog.{:04}.jpg'.format(i), (WIDTH, HEIGHT))) for i in trange(100, desc='cargar perros')])
 
 imagenes = np.concatenate((gatos, perros), axis=0)
 labels = np.zeros(len(gatos) + len(perros), dtype=int)
@@ -28,10 +29,14 @@ from vgg16 import model, img_to_vgg_input, all_cats
 from keras import backend as K
 
 predictor = K.function([model.input] + [K.learning_phase()], [model.layers[-1].output])
-predictions = np.array([predictor([img_to_vgg_input(imagen), False])[0] for imagen in imagenes])
+predictions = np.array([predictor([img_to_vgg_input(imagen), False])[0][0] for imagen in tqdm(imagenes, desc='caracteristicas vgg')])
 cat_probs = np.sum(predictions[:, all_cats], axis=1)
 
 np.save('vgg_output.npy', predictions)
+
+all_feats = np.c_[np.ones(len(imagenes)), cat_probs, brightness]
+np.save('all_feats.npy', all_feats)
+np.save('train_indices.npy', first_set_of_images)
 
 feats = []
 true = []
