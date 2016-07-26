@@ -1,6 +1,6 @@
 import os
 BASE_PATH = os.path.dirname(os.path.abspath(__file__))
-weights_path = BASE_PATH + '/../vgg16_weights.h5'
+weights_path = BASE_PATH + '/../data/vgg16_weights.h5'
 synsets = [line.strip().split(' ', 1) for line in open(BASE_PATH + '/../synset_words.txt')]
 
 import numpy as np
