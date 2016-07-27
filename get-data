@@ -1,5 +1,0 @@
-#!/bin/bash
-set -xe
-[ -d data ] && exit
-wget -O data.zip 'https://www.dropbox.com/sh/khu93aw2dj1iq1w/AAClkcZ9OnRyw0STXZeEU219a?dl=1&pv=1'
-unzip data.zip

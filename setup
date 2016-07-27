@@ -1,0 +1,11 @@
+#!/bin/bash
+set -xe
+if ! [ -d data ]; then
+    wget -O data.zip 'https://www.dropbox.com/sh/khu93aw2dj1iq1w/AAClkcZ9OnRyw0STXZeEU219a?dl=1&pv=1'
+    unzip -d data data.zip
+fi
+
+pip install theano && pip install https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-0.9.0-cp35-cp35m-linux_x86_64.whl && pip install keras
+
+conda install -y gdal
+python -c 'import nltk; nltk.download("punkt"); nltk.download("wordnet")'
